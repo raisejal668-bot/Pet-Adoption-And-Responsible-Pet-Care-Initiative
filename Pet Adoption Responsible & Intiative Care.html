@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paws & Tails - Pet Adoption & Care Portal</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                        },
+                        tealBrand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Fredoka', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, h4, .font-heading { font-family: 'Fredoka', cursive; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff7ed; }
+        ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+        }
+
+        /* Fixed aspect ratio frame container for perfect pet image display */
+        .pet-card-frame {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background-color: #fef3c7;
+        }
+        .pet-card-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+        .pet-card:hover .pet-card-frame img {
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body class="bg-amber-50/30 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 glass-nav border-b border-orange-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('home')">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 transform hover:rotate-6 transition">
+                        <i class="fa-solid fa-paw text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-bold font-heading text-slate-900 tracking-tight">Paws<span class="text-orange-500">&</span>Tails</span>
+                        <span class="block text-[10px] font-bold tracking-widest text-orange-600 uppercase">Pet Adoption & Health Hub</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1 font-semibold text-slate-600 text-sm">
+                    <button onclick="switchSection('home')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Home</button>
+                    <button onclick="switchSection('adopt')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Adopt A Pet</button>
+                    <button onclick="switchSection('care')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Care & Guidelines</button>
+                    <button onclick="switchSection('vets')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Find Vets</button>
+                    <button onclick="switchSection('store')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Medicine & Essentials</button>
+                    <button onclick="switchSection('faqs')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">FAQs</button>
+                    <button onclick="switchSection('contact')" class="nav-btn px-3 py-2 rounded-xl hover:text-orange-600 hover:bg-orange-50 transition">Contact</button>
+                </nav>
+
+                <!-- Actions -->
+                <div class="hidden sm:flex items-center space-x-3">
+                    <button onclick="toggleCartDrawer()" class="relative p-3 bg-orange-100/80 hover:bg-orange-100 text-orange-700 rounded-2xl transition">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 bg-orange-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                    </button>
+                    <button onclick="openAuthModal('login')" class="px-5 py-2.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:opacity-95 shadow-md shadow-orange-500/20 transition transform hover:-translate-y-0.5">
+                        <i class="fa-regular fa-user mr-2"></i>Log In / Register
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="lg:hidden flex items-center space-x-2">
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 text-orange-600 bg-orange-50 rounded-xl">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                        <span id="cart-badge-mobile" class="absolute -top-1 -right-1 bg-orange-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="p-2.5 text-slate-700 bg-slate-100 rounded-xl hover:bg-orange-100 transition">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-orange-100 px-4 pt-2 pb-6 space-y-1">
+            <button onclick="switchSection('home'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Home</button>
+            <button onclick="switchSection('adopt'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Adopt A Pet</button>
+            <button onclick="switchSection('care'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Care Guidelines</button>
+            <button onclick="switchSection('vets'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Vet Directory</button>
+            <button onclick="switchSection('store'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Medicine Store</button>
+            <button onclick="switchSection('faqs'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">FAQs</button>
+            <button onclick="switchSection('contact'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-xl text-slate-700 hover:bg-orange-50 font-semibold text-sm">Contact Us</button>
+            <div class="pt-2">
+                <button onclick="openAuthModal('login'); toggleMobileMenu()" class="w-full py-3 rounded-xl font-bold bg-orange-500 text-white text-sm">Sign In / Account</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- SECTION 1: HOME / HERO -->
+        <section id="sec-home" class="view-section">
+            <div class="relative overflow-hidden bg-gradient-to-b from-orange-100/70 via-amber-50/40 to-transparent py-16 md:py-24">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-6 text-center md:text-left">
+                            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 text-orange-700 font-bold text-xs uppercase tracking-wider">
+                                <i class="fa-solid fa-heart text-red-500 animate-pulse"></i> Certified Non-Profit Animal Haven
+                            </span>
+                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight">
+                                Find Your Forever <span class="text-orange-500 underline decoration-amber-400 decoration-wavy">Companion</span> Today
+                            </h1>
+                            <p class="text-base sm:text-lg text-slate-600 max-w-xl mx-auto md:mx-0">
+                                Connect with thousands of rescued dogs, cats, birds, and aquatic life waiting for a warm, loving home. Complete with expert veterinary care, medicine, and nutritional support.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                                <button onclick="switchSection('adopt')" class="px-8 py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-base shadow-lg shadow-orange-500/30 transition transform hover:-translate-y-1 flex items-center justify-center">
+                                    Explore Adoptable Pets <i class="fa-solid fa-arrow-right ml-2"></i>
+                                </button>
+                                <button onclick="switchSection('vets')" class="px-8 py-4 rounded-2xl bg-white border-2 border-orange-200 text-slate-700 hover:bg-orange-50 font-bold text-base transition flex items-center justify-center">
+                                    Consult Online Vets
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="w-full h-80 sm:h-96 rounded-3xl bg-gradient-to-tr from-orange-300 via-amber-200 to-emerald-200 p-3 shadow-2xl relative">
+                                <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=900" alt="Happy Golden Retriever Dog" class="w-full h-full object-cover object-center rounded-2xl" onerror="this.src='https://placehold.co/800x600/ffedd5/ea580c?text=Paws+%26+Tails'">
+                                <!-- Floating Card -->
+                                <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-orange-100 flex items-center gap-4 hidden sm:flex">
+                                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                                        <i class="fa-solid fa-shield-heart"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-400 font-bold uppercase">100% Health Screened</p>
+                                        <p class="text-sm font-extrabold text-slate-800">Vaccinated & Microchipped</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Category Badges -->
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <h2 class="text-2xl font-extrabold text-center text-slate-900 mb-8">Browse Pets by Category</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                    <button onclick="switchSection('adopt', 'dog')" class="p-6 bg-white rounded-3xl border border-orange-100 hover:border-orange-400 shadow-sm hover:shadow-xl transition text-center group">
+                        <div class="w-16 h-16 mx-auto bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-dog"></i>
+                        </div>
+                        <h3 class="mt-4 font-bold text-lg text-slate-800">Dogs</h3>
+                        <p class="text-xs text-slate-500 mt-1">Loyal companions & pups</p>
+                    </button>
+                    <button onclick="switchSection('adopt', 'cat')" class="p-6 bg-white rounded-3xl border border-orange-100 hover:border-orange-400 shadow-sm hover:shadow-xl transition text-center group">
+                        <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-cat"></i>
+                        </div>
+                        <h3 class="mt-4 font-bold text-lg text-slate-800">Cats</h3>
+                        <p class="text-xs text-slate-500 mt-1">Playful felines & kittens</p>
+                    </button>
+                    <button onclick="switchSection('adopt', 'bird')" class="p-6 bg-white rounded-3xl border border-orange-100 hover:border-orange-400 shadow-sm hover:shadow-xl transition text-center group">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-dove"></i>
+                        </div>
+                        <h3 class="mt-4 font-bold text-lg text-slate-800">Birds</h3>
+                        <p class="text-xs text-slate-500 mt-1">Vibrant feathered friends</p>
+                    </button>
+                    <button onclick="switchSection('adopt', 'fish')" class="p-6 bg-white rounded-3xl border border-orange-100 hover:border-orange-400 shadow-sm hover:shadow-xl transition text-center group">
+                        <div class="w-16 h-16 mx-auto bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-fish"></i>
+                        </div>
+                        <h3 class="mt-4 font-bold text-lg text-slate-800">Fish</h3>
+                        <p class="text-xs text-slate-500 mt-1">Peaceful aquatic life</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PET DISCOVERY & ADOPTION -->
+        <section id="sec-adopt" class="view-section hidden py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Meet Adoptable Pets</h2>
+                    <p class="text-slate-600 mt-2">Filter and find your ideal pet matching your household environment.</p>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="bg-white p-6 rounded-3xl border border-orange-100 shadow-sm mb-10">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Search Box -->
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+                            <input id="pet-search" oninput="renderPetGrid()" type="text" placeholder="Search breed, name..." class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                        </div>
+                        <!-- Animal Category Filter -->
+                        <div>
+                            <select id="pet-type-filter" onchange="renderPetGrid()" class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm font-semibold text-slate-700 bg-white">
+                                <option value="all">All Animals (Dogs, Cats, Birds, Fish)</option>
+                                <option value="dog">Dogs Only</option>
+                                <option value="cat">Cats Only</option>
+                                <option value="bird">Birds Only</option>
+                                <option value="fish">Fish Only</option>
+                            </select>
+                        </div>
+                        <!-- Age Filter -->
+                        <div>
+                            <select id="pet-age-filter" onchange="renderPetGrid()" class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm font-semibold text-slate-700 bg-white">
+                                <option value="all">All Ages</option>
+                                <option value="baby">Young / Baby</option>
+                                <option value="adult">Adult</option>
+                                <option value="senior">Senior</option>
+                            </select>
+                        </div>
+                        <!-- Status Filter -->
+                        <div>
+                            <select id="pet-status-filter" onchange="renderPetGrid()" class="w-full py-3 px-4 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm font-semibold text-slate-700 bg-white">
+                                <option value="all">All Statuses</option>
+                                <option value="Available">Available</option>
+                                <option value="Pending">Pending Adoption</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Grid -->
+                <div id="pet-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: PET CARE & GUIDELINES -->
+        <section id="sec-care" class="view-section hidden py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Comprehensive Care Guidelines</h2>
+                    <p class="text-slate-600 mt-2">Expert-backed advice to ensure a safe, clean, and happy life for your pets.</p>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex justify-center border-b border-slate-200 mb-8 overflow-x-auto space-x-2 sm:space-x-4">
+                    <button onclick="switchCareTab('dog')" id="care-tab-dog" class="care-tab-btn border-b-2 border-orange-500 text-orange-600 font-bold pb-3 px-5 flex items-center gap-2"><i class="fa-solid fa-dog"></i> Dog Care</button>
+                    <button onclick="switchCareTab('cat')" id="care-tab-cat" class="care-tab-btn border-b-2 border-transparent text-slate-500 font-bold pb-3 px-5 flex items-center gap-2"><i class="fa-solid fa-cat"></i> Cat Care</button>
+                    <button onclick="switchCareTab('bird')" id="care-tab-bird" class="care-tab-btn border-b-2 border-transparent text-slate-500 font-bold pb-3 px-5 flex items-center gap-2"><i class="fa-solid fa-dove"></i> Bird Care</button>
+                    <button onclick="switchCareTab('fish')" id="care-tab-fish" class="care-tab-btn border-b-2 border-transparent text-slate-500 font-bold pb-3 px-5 flex items-center gap-2"><i class="fa-solid fa-fish"></i> Fish Care</button>
+                </div>
+
+                <!-- Care Content Card -->
+                <div id="care-content-box" class="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm">
+                    <!-- Dynamic Care Guide HTML injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: VET DIRECTORY & BOOKING -->
+        <section id="sec-vets" class="view-section hidden py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Verified Veterinarians</h2>
+                    <p class="text-slate-600 mt-2">Book instant clinical or online consultations with top veterinary specialists.</p>
+                </div>
+
+                <div id="vet-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Dynamic Vets Inject -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: MEDICINE & ESSENTIALS STORE -->
+        <section id="sec-store" class="view-section hidden py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Pet Pharmacy & Essentials</h2>
+                    <p class="text-slate-600 mt-2">Prescription medicines, flea/tick care, premium food, and grooming items.</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <button onclick="filterStore('all')" class="store-btn px-5 py-2.5 rounded-full bg-orange-500 text-white font-bold text-xs uppercase shadow-sm">All Essentials</button>
+                    <button onclick="filterStore('medicine')" class="store-btn px-5 py-2.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs uppercase hover:bg-orange-50">Medicines</button>
+                    <button onclick="filterStore('food')" class="store-btn px-5 py-2.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs uppercase hover:bg-orange-50">Food & Nutrition</button>
+                    <button onclick="filterStore('accessory')" class="store-btn px-5 py-2.5 rounded-full bg-white text-slate-600 border border-slate-200 font-bold text-xs uppercase hover:bg-orange-50">Grooming & Toys</button>
+                </div>
+
+                <!-- Product Grid -->
+                <div id="store-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Dynamic Store Items Inject -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: FAQS -->
+        <section id="sec-faqs" class="view-section hidden py-10">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Frequently Asked Questions</h2>
+                    <p class="text-slate-600 mt-2">Find quick answers regarding our adoption screening, health checkups, and delivery.</p>
+                </div>
+
+                <div class="space-y-4" id="faq-accordion">
+                    <!-- Dynamic FAQs Inject -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: CONTACT US -->
+        <section id="sec-contact" class="view-section hidden py-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Form -->
+                    <div class="bg-white p-8 rounded-3xl border border-orange-100 shadow-md">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Send Us a Message</h3>
+                        <p class="text-slate-500 text-sm mb-6">Our adoption coordinators and vet support team respond within 24 hours.</p>
+
+                        <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Your Full Name</label>
+                                <input type="text" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Email Address</label>
+                                <input type="email" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Query Type</label>
+                                <select class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm font-medium text-slate-700 bg-white">
+                                    <option>Pet Adoption Application</option>
+                                    <option>Veterinary Booking Inquiry</option>
+                                    <option>Report Stray / Rescue Emergency</option>
+                                    <option>Medicine Store Order Query</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Message</label>
+                                <textarea rows="4" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-4 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition shadow-lg shadow-orange-500/20 text-sm">
+                                Send Message <i class="fa-solid fa-paper-plane ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Emergency Hotline Card -->
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-br from-orange-500 to-amber-500 text-white p-8 rounded-3xl shadow-xl">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-wider mb-3">24/7 Animal Ambulance</span>
+                            <h3 class="text-2xl font-bold mb-2">Emergency Rescue Hotline</h3>
+                            <p class="text-orange-100 text-sm mb-6">Found an injured or distressed stray? Contact our emergency veterinary unit immediately.</p>
+                            <div class="flex items-center gap-4 text-2xl font-black">
+                                <i class="fa-solid fa-phone-volume animate-bounce"></i>
+                                <span>1-800-PAWS-HELP</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm space-y-4">
+                            <h4 class="font-bold text-slate-900 text-lg">Central Haven Location</h4>
+                            <p class="text-slate-600 text-sm"><i class="fa-solid fa-location-dot text-orange-500 mr-2"></i> 452 Sunshine Avenue, Animal Welfare District, NY 10001</p>
+                            <p class="text-slate-600 text-sm"><i class="fa-solid fa-envelope text-orange-500 mr-2"></i> contact@pawsandtails.org</p>
+                            <p class="text-slate-600 text-sm"><i class="fa-solid fa-clock text-orange-500 mr-2"></i> Visiting Hours: Mon - Sat (9:00 AM - 6:00 PM)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 mt-20 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-slate-800">
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-paw text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold font-heading text-white">Paws<span class="text-orange-500">&</span>Tails</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Dedicated to transparent, humane pet adoption and lifetime wellness. Verified medical support, shelter housing, and quality care essentials.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase">Quick Navigation</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="switchSection('adopt')" class="hover:text-orange-400 transition">Adoptable Animals</a></li>
+                        <li><a href="#" onclick="switchSection('care')" class="hover:text-orange-400 transition">Care & Grooming Guides</a></li>
+                        <li><a href="#" onclick="switchSection('vets')" class="hover:text-orange-400 transition">Veterinary Directory</a></li>
+                        <li><a href="#" onclick="switchSection('store')" class="hover:text-orange-400 transition">Medicine Pharmacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase">Pet Categories</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="switchSection('adopt', 'dog')" class="hover:text-orange-400 transition">Dogs & Puppies</a></li>
+                        <li><a href="#" onclick="switchSection('adopt', 'cat')" class="hover:text-orange-400 transition">Cats & Kittens</a></li>
+                        <li><a href="#" onclick="switchSection('adopt', 'bird')" class="hover:text-orange-400 transition">Parrots & Songbirds</a></li>
+                        <li><a href="#" onclick="switchSection('adopt', 'fish')" class="hover:text-orange-400 transition">Aquatic & Tropical Fish</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-sm uppercase">Newsletter</h4>
+                    <p class="text-xs text-slate-400 mb-3">Subscribe for happy adoption stories and health tips.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-3 py-2 rounded-l-xl bg-slate-800 border border-slate-700 text-xs text-white focus:outline-none w-full">
+                        <button class="bg-orange-500 text-white px-4 rounded-r-xl font-bold hover:bg-orange-600 transition text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-6 text-center text-xs text-slate-500">
+                &copy; 2026 Paws & Tails Adoption Portal. All rights reserved. Built for compassionate pet care.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: Pet Profile & Adoption Modal -->
+    <div id="modal-pet-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-orange-100">
+            <button onclick="closeModal('modal-pet-detail')" class="absolute top-4 right-4 z-10 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-slate-600 shadow">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+            <div id="pet-detail-body">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: User Authentication (Login / Register) -->
+    <div id="modal-auth" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl relative">
+            <button onclick="closeModal('modal-auth')" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- User Category Tabs -->
+            <div class="flex border-b border-slate-200 mb-6">
+                <button onclick="switchAuthUserType('seeker')" id="auth-tab-seeker" class="w-1/2 py-2 font-bold text-center border-b-2 border-orange-500 text-orange-600 text-xs uppercase">Pet Adopter</button>
+                <button onclick="switchAuthUserType('partner')" id="auth-tab-partner" class="w-1/2 py-2 font-bold text-center border-b-2 border-transparent text-slate-400 text-xs uppercase">Vet / Shelter Partner</button>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="auth-title" class="text-2xl font-bold text-slate-900">Sign In</h3>
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs font-bold text-orange-600 hover:underline">Need an account? Register</button>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="auth-name-field" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+                    <input type="text" id="auth-name" class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Email Address</label>
+                    <input type="email" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Password</label>
+                    <input type="password" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition shadow-md shadow-orange-500/20 text-sm">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Vet Appointment Booking -->
+    <div id="modal-vet-booking" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative border border-orange-100">
+            <button onclick="closeModal('modal-vet-booking')" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-slate-900 mb-1">Book Consultation</h3>
+            <p id="booking-vet-name" class="text-xs font-bold uppercase text-orange-600 mb-6">Dr. Sarah Jenkins</p>
+
+            <form onsubmit="handleBookingSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Your Pet's Name & Species</label>
+                    <input type="text" placeholder="e.g., Milo (Golden Retriever)" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Date</label>
+                        <input type="date" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Time Slot</label>
+                        <select required class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm bg-white">
+                            <option>09:30 AM</option>
+                            <option>11:00 AM</option>
+                            <option>02:30 PM</option>
+                            <option>05:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Consultation Reason / Symptoms</label>
+                    <textarea rows="3" placeholder="Describe health issue, routine checkup, or vaccination..." class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-orange-500 text-white font-bold rounded-2xl hover:bg-orange-600 transition shadow-md shadow-orange-500/20 text-sm">
+                    Confirm Appointment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DRAWER: Shopping Cart -->
+    <div id="drawer-cart" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex justify-end">
+        <div class="bg-white w-full max-w-md h-full p-6 shadow-2xl flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-cart-shopping text-orange-500 mr-2"></i> Shopping Cart</h3>
+                    <button onclick="toggleCartDrawer()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div id="cart-items-container" class="mt-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <!-- Dynamic Cart List -->
+                </div>
+            </div>
+
+            <div class="border-t border-slate-200 pt-4 space-y-4">
+                <div class="flex justify-between font-bold text-lg text-slate-900">
+                    <span>Total Price:</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+                <button onclick="checkoutCart()" class="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-orange-500/20 transition text-sm">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Notification -->
+    <div id="toast-msg" class="fixed bottom-6 right-6 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl z-50 transform translate-y-32 transition duration-300 flex items-center gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-orange-400 text-lg"></i>
+        <span id="toast-text" class="font-bold text-xs">Notification</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Structures
+        const petsData = [
+            {
+                id: 1,
+                name: "Buddy",
+                type: "dog",
+                breed: "Golden Retriever",
+                age: "2 years",
+                ageCategory: "adult",
+                gender: "Male",
+                status: "Available",
+                fee: "$150",
+                image: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=800",
+                temperament: "Friendly, Gentle, Highly Trainable",
+                diet: "High-protein dry kibble, fresh carrots & boiled chicken",
+                care: "Requires 1-hour daily walk and regular coat brushing twice a week.",
+                vaccinations: "Rabies, DHPP, Bordetella (Fully Up To Date)",
+                location: "Central Shelter - NY"
+            },
+            {
+                id: 2,
+                name: "Milo",
+                type: "cat",
+                breed: "British Shorthair",
+                age: "9 months",
+                ageCategory: "baby",
+                gender: "Male",
+                status: "Available",
+                fee: "$100",
+                image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=800",
+                temperament: "Quiet, Affectionate, Indoor Companion",
+                diet: "Wet feline pate, high-grade kitten kibble",
+                care: "Loves scratching posts, cozy sunlit window seats, minimal grooming.",
+                vaccinations: "FVRCP Up to date, Dewormed",
+                location: "North Care Haven"
+            },
+            {
+                id: 3,
+                name: "Rio",
+                type: "bird",
+                breed: "Blue & Gold Macaw",
+                age: "3 years",
+                ageCategory: "adult",
+                gender: "Female",
+                status: "Available",
+                fee: "$200",
+                image: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?auto=format&fit=crop&q=80&w=800",
+                temperament: "Vocal, Social, Energetic",
+                diet: "Pelleted avian diet, fresh tropical fruits, walnuts",
+                care: "Needs a spacious flight cage, daily social interaction outside cage.",
+                vaccinations: "Avian Polyomavirus Clear",
+                location: "Aviation Rescue Wing"
+            },
+            {
+                id: 4,
+                name: "Nemo",
+                type: "fish",
+                breed: "Ocellaris Clownfish",
+                age: "1 year",
+                ageCategory: "adult",
+                gender: "Unspecified",
+                status: "Available",
+                fee: "$30",
+                image: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&q=80&w=800",
+                temperament: "Peaceful Community Fish",
+                diet: "Marine flake food, frozen brine shrimp",
+                care: "Requires salt-water reef aquarium setup with stable salinity levels.",
+                vaccinations: "Quarantine Health Check Passed",
+                location: "Aquatic Sanctuary Hub"
+            },
+            {
+                id: 5,
+                name: "Bella",
+                type: "dog",
+                breed: "French Bulldog",
+                age: "3 years",
+                ageCategory: "adult",
+                gender: "Female",
+                status: "Pending",
+                fee: "$180",
+                image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=800",
+                temperament: "Playful, Loving, Apartment-Friendly",
+                diet: "Sensitive-stomach grain-free kibble",
+                care: "Keep in air-conditioned space during summer, clean facial folds weekly.",
+                vaccinations: "Fully Vaccinated & Spayed",
+                location: "Central Shelter - NY"
+            },
+            {
+                id: 6,
+                name: "Luna",
+                type: "cat",
+                breed: "Siamese Cat",
+                age: "6 years",
+                ageCategory: "senior",
+                gender: "Female",
+                status: "Available",
+                fee: "$80",
+                image: "https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&q=80&w=800",
+                temperament: "Vocal, Sweet, Lap Hugger",
+                diet: "Senior wet formula food",
+                care: "Requires warm cozy bedding and gentle weekly brushing.",
+                vaccinations: "Fully Vaccinated, Spayed",
+                location: "South Haven Shelter"
+            }
+        ];
+
+        const vetsData = [
+            {
+                id: 1,
+                name: "Dr. Sarah Jenkins",
+                spec: "Canine & Feline Surgeon",
+                experience: "12 Years Exp.",
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=600",
+                clinic: "Pawsitive Health Clinic",
+                distance: "2.4 miles away"
+            },
+            {
+                id: 2,
+                name: "Dr. Robert Vance",
+                spec: "Exotic Birds & Avian Specialist",
+                experience: "9 Years Exp.",
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=600",
+                clinic: "Feather & Wings Veterinary Center",
+                distance: "4.1 miles away"
+            },
+            {
+                id: 3,
+                name: "Dr. Elena Rostova",
+                spec: "Aquatic Life & Marine Health",
+                experience: "15 Years Exp.",
+                rating: 5.0,
+                image: "https://images.unsplash.com/photo-1594824813566-78a050510614?auto=format&fit=crop&q=80&w=600",
+                clinic: "Blue Water Aquatic Care",
+                distance: "5.0 miles away"
+            }
+        ];
+
+        const storeProducts = [
+            {
+                id: 101,
+                name: "Amoxicillin Antibiotic Drops (50ml)",
+                category: "medicine",
+                price: 24.99,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 102,
+                name: "Flea & Tick Prevention Chewables",
+                category: "medicine",
+                price: 38.50,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 103,
+                name: "Premium Adult Canine Salmon Formula",
+                category: "food",
+                price: 45.00,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 104,
+                name: "Avian Vitamin & Electrolyte Powder",
+                category: "food",
+                price: 18.25,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 105,
+                name: "Ergonomic Pet De-Shedding Brush",
+                category: "accessory",
+                price: 14.99,
+                rating: 4.6,
+                image: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=600"
+            }
+        ];
+
+        const faqsData = [
+            {
+                q: "What is the pet adoption process?",
+                a: "Our adoption process is simple: browse adoptable pets, submit an online adoption inquiry, participate in a short phone background verification, and visit the shelter to pick up your new family member!"
+            },
+            {
+                q: "Are all pets health-inspected and vaccinated?",
+                a: "Yes! Every dog, cat, bird, or aquatic pet undergoes a complete health check by our certified shelter veterinarians, including necessary core vaccinations, deworming, and microchipping."
+            },
+            {
+                q: "How does the online vet consultation work?",
+                a: "Select a veterinarian from our directory, click 'Book Appointment', and pick a suitable time slot. You will receive a video link via email for the virtual consultation."
+            },
+            {
+                q: "What is the return policy for medicine & products?",
+                a: "Unopened medicines and pet care accessories can be returned within 14 days of delivery for a full refund or exchange."
+            }
+        ];
+
+        const careGuides = {
+            dog: {
+                title: "Complete Canine Health & Routine Guide",
+                items: [
+                    { title: "Nutrition & Diet", desc: "Feed balanced kibble with real protein (chicken/salmon) twice daily. Avoid chocolate, grapes, and cooked bones." },
+                    { title: "Exercise & Grooming", desc: "Provide 30-60 minutes of physical walks daily. Brush coat twice a week and clip nails every month." },
+                    { title: "Vaccination Schedule", desc: "Ensure annual boosters for Rabies, DHPP, and Bordetella protection." }
+                ]
+            },
+            cat: {
+                title: "Complete Feline Wellness & Living Guide",
+                items: [
+                    { title: "Hydration & Diet", desc: "Cats have a low thirst drive; provide wet canned food alongside clean running water fountains." },
+                    { title: "Litter Box Hygiene", desc: "Scoop the litter box daily and replace litter completely every two weeks." },
+                    { title: "Play & Scratching", desc: "Provide sisal scratch posts and 15 minutes of feather wand playtime to keep claws healthy." }
+                ]
+            },
+            bird: {
+                title: "Parrot & Avian Maintenance Protocol",
+                items: [
+                    { title: "Enclosure & Environment", desc: "Keep cages away from drafty windows and kitchen Teflon fumes. Ensure non-toxic wooden perches." },
+                    { title: "Dietary Balance", desc: "70% pelleted diet supplemented with fresh leafy greens, carrots, and limited seeds." }
+                ]
+            },
+            fish: {
+                title: "Aquarium & Aquatic Ecosystem Guide",
+                items: [
+                    { title: "Water Quality Testing", desc: "Maintain water pH between 6.8 - 7.5. Test ammonia and nitrite levels weekly." },
+                    { title: "Filter Maintenance", desc: "Perform a 20% water change bi-weekly using dechlorinated water." }
+                ]
+            }
+        };
+
+        // State variables
+        let shoppingCart = [];
+        let authMode = 'login'; // 'login' or 'register'
+
+        // Initialize App
+        window.onload = function() {
+            renderPetGrid();
+            switchCareTab('dog');
+            renderVetGrid();
+            renderStoreGrid('all');
+            renderFaqs();
+        };
+
+        // Section Switcher
+        function switchSection(secId, filterType = null) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(`sec-${secId}`);
+            if(target) target.classList.remove('hidden');
+
+            if(secId === 'adopt' && filterType) {
+                document.getElementById('pet-type-filter').value = filterType;
+                renderPetGrid();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Pet Discovery Cards
+        function renderPetGrid() {
+            const grid = document.getElementById('pet-grid');
+            const searchVal = document.getElementById('pet-search').value.toLowerCase();
+            const typeFilter = document.getElementById('pet-type-filter').value;
+            const ageFilter = document.getElementById('pet-age-filter').value;
+            const statusFilter = document.getElementById('pet-status-filter').value;
+
+            const filtered = petsData.filter(pet => {
+                const matchesSearch = pet.name.toLowerCase().includes(searchVal) || pet.breed.toLowerCase().includes(searchVal);
+                const matchesType = typeFilter === 'all' || pet.type === typeFilter;
+                const matchesAge = ageFilter === 'all' || pet.ageCategory === ageFilter;
+                const matchesStatus = statusFilter === 'all' || pet.status === statusFilter;
+                return matchesSearch && matchesType && matchesAge && matchesStatus;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-orange-100 p-8">
+                        <i class="fa-solid fa-paw text-5xl text-orange-200 mb-3"></i>
+                        <h3 class="text-xl font-bold text-slate-800">No matching pets found</h3>
+                        <p class="text-xs text-slate-500 mt-1">Try adjusting your search criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(pet => `
+                <div class="pet-card bg-white rounded-3xl overflow-hidden border border-orange-100 shadow-sm hover:shadow-xl transition transform hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="pet-card-frame">
+                            <img src="${pet.image}" alt="${pet.name}" loading="lazy" onerror="this.src='https://placehold.co/600x400/ffedd5/ea580c?text=${encodeURIComponent(pet.name)}'">
+                            <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold shadow-md ${pet.status === 'Available' ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}">
+                                ${pet.status}
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900">${pet.name}</h3>
+                                    <p class="text-xs font-semibold text-orange-600">${pet.breed}</p>
+                                </div>
+                                <span class="text-xs bg-orange-100 text-orange-800 px-2.5 py-1 rounded-lg font-bold">${pet.age}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-4 line-clamp-2"><i class="fa-solid fa-heart text-red-400 mr-1"></i> ${pet.temperament}</p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="openPetModal(${pet.id})" class="w-full py-3 bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold rounded-2xl transition flex items-center justify-center gap-2 text-xs">
+                            View Detailed Profile <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open Pet Modal
+        function openPetModal(id) {
+            const pet = petsData.find(p => p.id === id);
+            if(!pet) return;
+
+            const modalBody = document.getElementById('pet-detail-body');
+            modalBody.innerHTML = `
+                <div class="grid md:grid-cols-2">
+                    <div class="h-64 md:h-full bg-orange-100">
+                        <img src="${pet.image}" alt="${pet.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x600/ffedd5/ea580c?text=${encodeURIComponent(pet.name)}'">
+                    </div>
+                    <div class="p-6 md:p-8 space-y-4">
+                        <div>
+                            <span class="text-[10px] font-bold tracking-widest text-orange-600 uppercase">${pet.type} Adoption Profile</span>
+                            <h2 class="text-3xl font-extrabold text-slate-900">${pet.name}</h2>
+                            <p class="text-xs font-bold text-slate-500">${pet.breed} • ${pet.age} (${pet.gender})</p>
+                        </div>
+                        <div class="space-y-2 text-xs text-slate-600">
+                            <p><strong>Adoption Fee:</strong> ${pet.fee}</p>
+                            <p><strong>Temperament:</strong> ${pet.temperament}</p>
+                            <p><strong>Dietary Needs:</strong> ${pet.diet}</p>
+                            <p><strong>Care Routine:</strong> ${pet.care}</p>
+                            <p><strong>Vaccinations:</strong> ${pet.vaccinations}</p>
+                            <p><strong>Location:</strong> ${pet.location}</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-100">
+                            <button onclick="requestAdoption('${pet.name}')" class="w-full py-3 bg-orange-500 text-white font-bold rounded-2xl shadow-lg hover:bg-orange-600 transition text-xs">
+                                Submit Adoption Application
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-pet-detail').classList.remove('hidden');
+        }
+
+        function requestAdoption(name) {
+            closeModal('modal-pet-detail');
+            showToast(`Adoption inquiry submitted for ${name}! Our team will contact you.`);
+        }
+
+        // Care Guidelines Switcher
+        function switchCareTab(tabKey) {
+            const guide = careGuides[tabKey];
+            if(!guide) return;
+
+            document.querySelectorAll('.care-tab-btn').forEach(btn => {
+                btn.className = 'care-tab-btn border-b-2 border-transparent text-slate-500 font-bold pb-3 px-5 flex items-center gap-2';
+            });
+            const activeBtn = document.getElementById(`care-tab-${tabKey}`);
+            if(activeBtn) activeBtn.className = 'care-tab-btn border-b-2 border-orange-500 text-orange-600 font-bold pb-3 px-5 flex items-center gap-2';
+
+            const box = document.getElementById('care-content-box');
+            box.innerHTML = `
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">${guide.title}</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    ${guide.items.map(item => `
+                        <div class="p-6 rounded-2xl bg-orange-50/50 border border-orange-100">
+                            <h4 class="font-bold text-slate-800 text-base mb-2"><i class="fa-solid fa-circle-check text-orange-500 mr-2"></i> ${item.title}</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">${item.desc}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Vet Directory
+        function renderVetGrid() {
+            const grid = document.getElementById('vet-grid');
+            grid.innerHTML = vetsData.map(v => `
+                <div class="bg-white rounded-3xl p-6 border border-orange-100 shadow-sm hover:shadow-md transition text-center flex flex-col justify-between">
+                    <div>
+                        <img src="${v.image}" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-orange-100 mb-4 shadow" onerror="this.src='https://placehold.co/200x200/ffedd5/ea580c?text=Vet'">
+                        <h3 class="text-lg font-bold text-slate-900">${v.name}</h3>
+                        <p class="text-xs font-bold text-orange-600 mb-1">${v.spec}</p>
+                        <p class="text-xs text-slate-400 mb-3">${v.experience} • ${v.clinic}</p>
+                        <div class="inline-flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full text-amber-700 font-bold text-xs mb-4">
+                            <i class="fa-solid fa-star text-amber-400"></i> ${v.rating} (${v.distance})
+                        </div>
+                    </div>
+                    <button onclick="openBookingModal('${v.name}')" class="w-full py-3 bg-slate-900 hover:bg-orange-500 text-white font-bold rounded-2xl transition text-xs">
+                        Book Consultation
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function openBookingModal(vetName) {
+            document.getElementById('booking-vet-name').innerText = vetName;
+            document.getElementById('modal-vet-booking').classList.remove('hidden');
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            closeModal('modal-vet-booking');
+            showToast("Vet appointment booked successfully!");
+        }
+
+        // Store Logic
+        function renderStoreGrid(cat) {
+            const grid = document.getElementById('store-grid');
+            const items = cat === 'all' ? storeProducts : storeProducts.filter(p => p.category === cat);
+
+            grid.innerHTML = items.map(p => `
+                <div class="bg-white rounded-3xl p-5 border border-orange-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                    <div>
+                        <div class="w-full h-40 rounded-2xl overflow-hidden mb-4 bg-slate-50 border border-slate-100">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x300/ffedd5/ea580c?text=Product'">
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">${p.name}</h4>
+                        <p class="text-base font-extrabold text-orange-600 mb-2">$${p.price.toFixed(2)}</p>
+                    </div>
+                    <button onclick="addToCart(${p.id})" class="w-full py-2.5 bg-slate-900 hover:bg-orange-500 text-white font-bold rounded-xl text-xs transition">
+                        <i class="fa-solid fa-cart-plus mr-1"></i> Add To Cart
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterStore(cat) {
+            renderStoreGrid(cat);
+        }
+
+        function addToCart(id) {
+            const prod = storeProducts.find(p => p.id === id);
+            if(prod) {
+                shoppingCart.push(prod);
+                updateCartUI();
+                showToast(`${prod.name} added to cart!`);
+            }
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-badge').innerText = shoppingCart.length;
+            document.getElementById('cart-badge-mobile').innerText = shoppingCart.length;
+
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+
+            if(shoppingCart.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 text-xs py-8">Your cart is currently empty.</p>`;
+                totalEl.innerText = "$0.00";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = shoppingCart.map((item, index) => {
+                total += item.price;
+                return `
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image}" class="w-10 h-10 rounded-xl object-cover">
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">${item.name}</p>
+                                <p class="text-xs font-extrabold text-orange-600">$${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-slate-400 hover:text-red-500 text-xs p-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            totalEl.innerText = `$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            shoppingCart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCartDrawer() {
+            document.getElementById('drawer-cart').classList.toggle('hidden');
+        }
+
+        function checkoutCart() {
+            if(shoppingCart.length === 0) {
+                showToast("Cart is empty!");
+                return;
+            }
+            shoppingCart = [];
+            updateCartUI();
+            toggleCartDrawer();
+            showToast("Order placed successfully!");
+        }
+
+        // FAQs
+        function renderFaqs() {
+            const container = document.getElementById('faq-accordion');
+            container.innerHTML = faqsData.map((faq, idx) => `
+                <div class="bg-white rounded-2xl border border-orange-100 overflow-hidden">
+                    <button onclick="toggleFaq(${idx})" class="w-full p-5 text-left font-bold text-slate-800 flex justify-between items-center text-sm">
+                        <span>${faq.q}</span>
+                        <i id="faq-icon-${idx}" class="fa-solid fa-chevron-down text-orange-500 transition-transform text-xs"></i>
+                    </button>
+                    <div id="faq-ans-${idx}" class="hidden p-5 pt-0 text-xs text-slate-600 border-t border-slate-50 leading-relaxed">
+                        ${faq.a}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleFaq(idx) {
+            const ans = document.getElementById(`faq-ans-${idx}`);
+            const icon = document.getElementById(`faq-icon-${idx}`);
+            ans.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Authentication Logic
+        function openAuthModal(mode) {
+            authMode = mode;
+            document.getElementById('modal-auth').classList.remove('hidden');
+            updateAuthForm();
+        }
+
+        function switchAuthUserType(type) {
+            document.getElementById('auth-tab-seeker').className = type === 'seeker' ? 'w-1/2 py-2 font-bold text-center border-b-2 border-orange-500 text-orange-600 text-xs uppercase' : 'w-1/2 py-2 font-bold text-center border-b-2 border-transparent text-slate-400 text-xs uppercase';
+            document.getElementById('auth-tab-partner').className = type === 'partner' ? 'w-1/2 py-2 font-bold text-center border-b-2 border-orange-500 text-orange-600 text-xs uppercase' : 'w-1/2 py-2 font-bold text-center border-b-2 border-transparent text-slate-400 text-xs uppercase';
+        }
+
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'register' : 'login';
+            updateAuthForm();
+        }
+
+        function updateAuthForm() {
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+            const nameField = document.getElementById('auth-name-field');
+
+            if(authMode === 'login') {
+                title.innerText = "Sign In";
+                submitBtn.innerText = "Sign In";
+                toggleBtn.innerText = "Need an account? Register";
+                nameField.classList.add('hidden');
+            } else {
+                title.innerText = "Register Account";
+                submitBtn.innerText = "Create Account";
+                toggleBtn.innerText = "Already registered? Sign In";
+                nameField.classList.remove('hidden');
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            closeModal('modal-auth');
+            showToast(authMode === 'login' ? "Logged in successfully!" : "Account created successfully!");
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            e.target.reset();
+            showToast("Thank you! Your message has been sent.");
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').innerText = msg;
+            toast.classList.remove('translate-y-32');
+            setTimeout(() => {
+                toast.classList.add('translate-y-32');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
